@@ -5,10 +5,7 @@ import (
 	"log"
 	"os"
 
-	"quick-congress/client/congress-client"
-
 	"github.com/go-redis/redis"
-	"github.com/go-redis/redis/v8"
 	"github.com/joho/godotenv"
 )
 
@@ -29,16 +26,16 @@ type QuickCongressRedisClient struct {
 	redisClient *redis.Client	
 }
 
-func NewClient() *QuickCongressRedisClient {
+func (q *QuickCongressRedisClient) NewClient() *QuickCongressRedisClient {
 	return &QuickCongressRedisClient{
 		redisHost: RedisHost,
 		redisPassword: RedisPassword,
 		redisClient: &redis.NewClient(&redis.Options{
 			Addr: redisHost,
 			Password: redisPassword,
-			DB: 0
-		}),
-	}
+			DB: 0,
+		},),
+	},
 }
 
 func ReconnectRedis(client *QuickCongressRedisClient) {
@@ -47,7 +44,7 @@ func ReconnectRedis(client *QuickCongressRedisClient) {
 	return
 }
 
-func SetValue(client *QuickCongressRedisClient key string, value *congress.CongressRes) {
+func SetValue(client *QuickCongressRedisClient, key string, value *congresses.CongressRes) {
 	client.redisClient.SetValue()
 }
 
