@@ -1,9 +1,9 @@
 package dto
 
 type CongressSession struct {
-	Chamber   string `json:"chamber"`
-	EndDate   string `json:"endDate"`
 	Number    uint16 `json:"number"`
-	StartDate string `json:"startDate"`
+	Chamber   string `json:"chamber"`
 	Type      string `json:"type"`
+	StartDate string `json:"startDate"`
+	EndDate   string `json:"endDate"`
 }

@@ -1,9 +1,11 @@
 package dto
 
 type Congress struct {
-	EndYear   string            `json:"endYear"`
-	Name      string            `json:"name"`
-	Sessions  []CongressSession `json:"sessions"`
-	StartYear string            `json:"startYear"`
-	Url       string            `json:"url"`
+	Name       string            `json:"name"`
+	Number     uint16            `json:"number"`
+	Sessions   []CongressSession `json:"sessions"`
+	StartYear  string            `json:"startYear"`
+	UpdateDate string            `json:"updateDate"`
+	EndYear    string            `json:"endYear"`
+	Url        string            `json:"url"`
 }
