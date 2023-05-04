@@ -1,6 +1,6 @@
 package model
 
-import "github.com/zfoteff/quick-congress/pkg/model/dto"
+import "github.com/zfoteff/quick-congress/pkg/quickcongress/model/dto"
 
 type CongressSuccessRes struct {
 	Congress dto.Congress `json:"congress"`

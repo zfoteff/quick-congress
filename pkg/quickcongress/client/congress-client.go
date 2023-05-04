@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/zfoteff/quick-congress/pkg/model"
+	"github.com/zfoteff/quick-congress/pkg/quickcongress/model"
 )
 
 const (
@@ -66,7 +66,7 @@ func (c *CongressClient) sendRequest(req *http.Request, v interface{}) error {
 	return nil
 }
 
-func (c *CongressClient) GetCongresses(ctx context.Context, options *model.CongressesReqOptions, query *model.CongressesReqQuery) (*model.CongressesSuccessRes, error) {
+func (c *CongressClient) GetCongresses(ctx context.Context, options *model.CongressesReqOptions) (*model.CongressesSuccessRes, error) {
 	var limit uint16 = 1
 	var format string = "json"
 	var offset uint16 = 0
@@ -77,7 +77,16 @@ func (c *CongressClient) GetCongresses(ctx context.Context, options *model.Congr
 		offset = options.QueryString.Offset
 	}
 
-	req, err := http.NewRequest("GET", fmt.Sprintf("%s/congress?limit=%d&offset=%d&format=%s%api_key=%s", limit, offset, format, c.apiKey), nil)
+	req, err := http.NewRequest(
+		"GET",
+		fmt.Sprintf("%s/congress?limit=%d&offset=%d&format=%s%api_key=%s",
+			c.baseURL,
+			limit,
+			offset,
+			format,
+			c.apiKey),
+		nil)
+
 	if err != nil {
 		return nil, err
 	}

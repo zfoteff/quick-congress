@@ -1,6 +1,6 @@
 package model
 
-import "github.com/zfoteff/quick-congress/pkg/model/dto"
+import "github.com/zfoteff/quick-congress/pkg/quickcongress/model/dto"
 
 type CongressesSuccessRes struct {
 	Congresses      []dto.Congress      `json:"congresses"`
@@ -18,10 +18,9 @@ type CongressError struct {
 }
 
 type CongressesReqQuery struct {
-	Format string `json:"format"`
-	Limit  uint16 `json:"limit"`
-	Offset uint16 `json:"offset"`
-	ApiKey string `json:"api_key"`
+	Format string
+	Limit  uint16
+	Offset uint16
 }
 
 type CongressesReqOptions struct {
