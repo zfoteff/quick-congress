@@ -1,6 +1,7 @@
 package quickcongress
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"os"
@@ -22,8 +23,9 @@ var rootCmd = &cobra.Command{
 			log.Fatalf("Some error occured. Err: %s", err)
 		}
 
-		client := (*client.CongressClient).NewClient(os.Getenv("API_KEY"))
-		println(cli.GetCurrentCongressSession())
+		client := client.NewCongressClient(os.Getenv("LIBRARY_OF_CONGRESS_API_KEY"))
+		context := context.TODO()
+		println(cli.GetCurrentCongressSession(client, context))
 	},
 }
 

@@ -27,7 +27,7 @@ type CongressClientSuccessRes struct {
 	Data interface{} `json:"data"`
 }
 
-func (c *CongressClient) NewClient(apiKey string) *CongressClient {
+func NewCongressClient(apiKey string) *CongressClient {
 	return &CongressClient{
 		baseURL: BaseURLV3 + ApiVersion,
 		apiKey:  apiKey,
@@ -59,7 +59,11 @@ func (c *CongressClient) sendRequest(req *http.Request, v interface{}) error {
 	}
 
 	// Unmarshall into success response
-	if err = json.NewDecoder(res.Body).Decode(&CongressClientSuccessRes{Data: v}); err != nil {
+	if err = json.NewDecoder(res.Body).Decode(
+		&CongressClientSuccessRes{
+			Code: uint16(res.StatusCode),
+			Data: v,
+		}); err != nil {
 		return err
 	}
 
@@ -79,7 +83,7 @@ func (c *CongressClient) GetCongresses(ctx context.Context, options *model.Congr
 
 	req, err := http.NewRequest(
 		"GET",
-		fmt.Sprintf("%s/congress?limit=%d&offset=%d&format=%s%api_key=%s",
+		fmt.Sprintf("%s/congress?limit=%d&offset=%d&format=%s&api_key=%s",
 			c.baseURL,
 			limit,
 			offset,
