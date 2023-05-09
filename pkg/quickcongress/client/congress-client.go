@@ -3,8 +3,8 @@ package client
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"fmt"
+	"log"
 	"net/http"
 	"time"
 
@@ -23,8 +23,13 @@ type CongressClient struct {
 }
 
 type CongressClientSuccessRes struct {
-	Code uint16      `json:"code"`
-	Data interface{} `json:"data"`
+	Code       uint16
+	Congresses interface{} `json:"data"`
+}
+
+type CongressClientErrorRes struct {
+	Code  uint16
+	Error interface{} `json:"error"`
 }
 
 func NewCongressClient(apiKey string) *CongressClient {
@@ -43,6 +48,7 @@ func (c *CongressClient) sendRequest(req *http.Request, v interface{}) error {
 
 	res, err := c.httpClient.Do(req)
 	if err != nil {
+		log.Fatalf("Some error occured. Err: %s", err)
 		return err
 	}
 
@@ -52,18 +58,14 @@ func (c *CongressClient) sendRequest(req *http.Request, v interface{}) error {
 	if res.StatusCode != http.StatusOK {
 		var errRes model.CongressesErrorRes
 		if err = json.NewDecoder(res.Body).Decode(&errRes); err == nil {
-			return errors.New(errRes.CongressErrors.Message)
+			log.Fatalf("Some error occured. Err: %s", err)
 		}
 
-		return fmt.Errorf("unknown error, status code: %d", res.StatusCode)
+		return err
 	}
 
 	// Unmarshall into success response
-	if err = json.NewDecoder(res.Body).Decode(
-		&CongressClientSuccessRes{
-			Code: uint16(res.StatusCode),
-			Data: v,
-		}); err != nil {
+	if err = json.NewDecoder(res.Body).Decode(v); err != nil {
 		return err
 	}
 
@@ -97,7 +99,7 @@ func (c *CongressClient) GetCongresses(ctx context.Context, options *model.Congr
 
 	req = req.WithContext(ctx)
 
-	res := model.CongressClientSuccessRes{}
+	res := model.CongressesSuccessRes{}
 	if err := c.sendRequest(req, &res); err != nil {
 		return nil, err
 	}
