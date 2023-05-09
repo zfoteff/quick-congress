@@ -5,7 +5,7 @@ type Congress struct {
 	Number     uint16            `json:"number"`
 	Sessions   []CongressSession `json:"sessions"`
 	StartYear  string            `json:"startYear"`
-	UpdateDate string            `json:"updateDate"`
-	EndYear    string            `json:"endYear"`
-	Url        string            `json:"url"`
+	UpdateDate string            `json:"updateDate,omitempty"`
+	EndYear    string            `json:"endYear,omitempty"`
+	Url        string            `json:"url,omitempty"`
 }

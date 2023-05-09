@@ -97,7 +97,7 @@ func (c *CongressClient) GetCongresses(ctx context.Context, options *model.Congr
 
 	req = req.WithContext(ctx)
 
-	res := model.CongressesSuccessRes{}
+	res := model.CongressClientSuccessRes{}
 	if err := c.sendRequest(req, &res); err != nil {
 		return nil, err
 	}
