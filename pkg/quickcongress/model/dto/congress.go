@@ -9,3 +9,12 @@ type Congress struct {
 	EndYear    string            `json:"endYear,omitempty"`
 	Url        string            `json:"url,omitempty"`
 }
+
+func (c *Congress) ToString() string {
+	var congressString string
+	congressString = fmt.Sprintf("Congress (): ")
+}
+
+func (c *Congress) getSessionsString string {
+	
+}

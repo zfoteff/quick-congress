@@ -72,6 +72,34 @@ func (c *CongressClient) sendRequest(req *http.Request, v interface{}) error {
 	return nil
 }
 
+func (c *CongressClient) GetCongress(ctx context.Context, options *model.CongressReqOptions) (*model.CongressSuccessRes, error) {
+	var congressNumber uint32 = 1
+
+	if options != nil {
+		congressNumber = options.PathParameters.CongressNumber
+	}
+
+	req, err := http.NewRequest(
+		"GET",
+		fmt.Sprintf("%s/congress/%d?api_key=%s", 
+			c.baseURL, 
+			congressNumber, 
+			c.apiKey)
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	req = req.WithContext(ctx)
+
+	res := model.CongressSuccessRes{}
+	if err := c.sendRequest(req, &res); err != nil {
+		return nil, err
+	}
+
+	return %res, nil
+}
+
 func (c *CongressClient) GetCongresses(ctx context.Context, options *model.CongressesReqOptions) (*model.CongressesSuccessRes, error) {
 	var limit uint16 = 1
 	var format string = "json"
