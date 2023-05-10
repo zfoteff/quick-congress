@@ -1,11 +1,18 @@
 package model
 
-import "github.com/zfoteff/quick-congress/pkg/quickcongress/model/dto"
+import (
+	"github.com/zfoteff/quick-congress/pkg/quickcongress/model/dto"
+)
 
 type CongressesSuccessRes struct {
 	Congresses      []dto.Congress      `json:"congresses"`
 	Pagination      dto.Pagination      `json:"pagination"`
 	RequestMetadata dto.RequestMetadata `json:"request"`
+}
+
+func (c *CongressesSuccessRes) ToString() string {
+	var congressessString string
+	return congressessString
 }
 
 type CongressesErrorRes struct {

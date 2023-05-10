@@ -72,6 +72,10 @@ func (c *CongressClient) sendRequest(req *http.Request, v interface{}) error {
 	return nil
 }
 
+func (c *CongressClient) GetCongress(ctx context.Context, options *model.CongressReqOptions) (*model.CongressSucessRes, error) {
+
+}
+
 func (c *CongressClient) GetCongresses(ctx context.Context, options *model.CongressesReqOptions) (*model.CongressesSuccessRes, error) {
 	var limit uint16 = 1
 	var format string = "json"

@@ -27,5 +27,5 @@ func GetCurrentCongressSession(client *client.CongressClient, ctx context.Contex
 		panic(error)
 	}
 
-	return string(response_string)
+	return string(response_string.ToString())
 }
