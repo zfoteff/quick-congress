@@ -12,6 +12,8 @@ import (
 	"github.com/zfoteff/quick-congress/pkg/quickcongress/controller/cli"
 )
 
+const menu string = "Quick Congress"
+
 func congressCLIEntry(cmd *cobra.Command, args []string) {
 	err := godotenv.Load(".env")
 	if err != nil {
@@ -20,6 +22,11 @@ func congressCLIEntry(cmd *cobra.Command, args []string) {
 
 	client := client.NewCongressClient(os.Getenv("LIBRARY_OF_CONGRESS_API_KEY"))
 	println(cli.GetCurrentCongressSession(client, context.TODO()))
+
+	switch userIn {
+	case 0:
+
+	}
 }
 
 func Execute() {

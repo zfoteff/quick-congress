@@ -11,5 +11,5 @@ type CongressSession struct {
 }
 
 func (c *CongressSession) ToString() string {
-	return fmt.Sprintf("[%s] (%s - %s)\t%s", c.Type, c.StartDate, c.EndDate, c.Chamber)
+	return fmt.Sprintf("\t[%s] (%s - %s)\t%s\n", c.Type, c.StartDate, c.EndDate, c.Chamber)
 }

@@ -12,6 +12,11 @@ type CongressesSuccessRes struct {
 
 func (c *CongressesSuccessRes) ToString() string {
 	var congressessString string
+
+	for _, congress := range c.Congresses {
+		congressessString += congress.ToString()
+	}
+
 	return congressessString
 }
 

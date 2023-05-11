@@ -73,7 +73,7 @@ func (c *CongressClient) sendRequest(req *http.Request, v interface{}) error {
 }
 
 func (c *CongressClient) GetCongress(ctx context.Context, options *model.CongressReqOptions) (*model.CongressSuccessRes, error) {
-	var congressNumber uint32 = 1
+	var congressNumber uint16 = 1
 
 	if options != nil {
 		congressNumber = options.PathParameters.CongressNumber
@@ -81,11 +81,12 @@ func (c *CongressClient) GetCongress(ctx context.Context, options *model.Congres
 
 	req, err := http.NewRequest(
 		"GET",
-		fmt.Sprintf("%s/congress/%d?api_key=%s", 
-			c.baseURL, 
-			congressNumber, 
-			c.apiKey)
-	)
+		fmt.Sprintf("%s/congress/%d?api_key=%s",
+			c.baseURL,
+			congressNumber,
+			c.apiKey),
+		nil)
+
 	if err != nil {
 		return nil, err
 	}
@@ -97,7 +98,7 @@ func (c *CongressClient) GetCongress(ctx context.Context, options *model.Congres
 		return nil, err
 	}
 
-	return %res, nil
+	return &res, nil
 }
 
 func (c *CongressClient) GetCongresses(ctx context.Context, options *model.CongressesReqOptions) (*model.CongressesSuccessRes, error) {

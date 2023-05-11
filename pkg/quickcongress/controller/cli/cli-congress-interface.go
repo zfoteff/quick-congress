@@ -2,7 +2,6 @@ package cli
 
 import (
 	"context"
-	"encoding/json"
 
 	"github.com/zfoteff/quick-congress/pkg/quickcongress/client"
 	"github.com/zfoteff/quick-congress/pkg/quickcongress/model"
@@ -21,11 +20,5 @@ func GetCurrentCongressSession(client *client.CongressClient, ctx context.Contex
 		panic(error)
 	}
 
-	response_string, error := json.Marshal(response)
-
-	if error != nil {
-		panic(error)
-	}
-
-	return string(response_string.ToString())
+	return string(response.ToString())
 }
