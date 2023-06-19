@@ -48,7 +48,7 @@ func (c *CongressClient) sendRequest(req *http.Request, v interface{}) error {
 
 	res, err := c.httpClient.Do(req)
 	if err != nil {
-		log.Fatalf("Some error occured. Err: %s", err)
+		fmt.Printf("Some error occured. Err: %s", err)
 		return err
 	}
 

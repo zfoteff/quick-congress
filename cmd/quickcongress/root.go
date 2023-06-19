@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"regexp"
 
 	"github.com/joho/godotenv"
 	"github.com/spf13/cobra"
@@ -14,15 +15,34 @@ import (
 )
 
 func congressCLIEntry(cmd *cobra.Command, args []string) {
+	client := client.NewCongressClient(os.Getenv("LIBRARY_OF_CONGRESS_API_KEY"))
 	err := godotenv.Load(".env")
 	if err != nil {
 		log.Fatalf("Some error occured. Err: %s", err)
 	}
 
-	println(bin.MenuString)
+	var menuChoice string
+	for {
+		print(bin.MenuString)
+		fmt.Scan(&menuChoice)
+		isNumeric := regexp.MustCompile(`\d`).MatchString(menuChoice)
+		if isNumeric {
 
-	client := client.NewCongressClient(os.Getenv("LIBRARY_OF_CONGRESS_API_KEY"))
-	println(cli.GetCurrentCongressSession(client, context.TODO()))
+			if menuChoice < 0 || menuChoice > 3 {
+				println("[ERR] Please only enter the options displayed in the menu")
+			}
+		} else if menuChoice < 0 || menuChoice > 3 {
+		} else {
+			break
+		}
+	}
+
+	switch menuChoice {
+	case 0:
+		println(cli.GetCurrentCongressSession(client, context.TODO()))
+	default:
+		println("[ERR] Please enter one of the menu selections on screen")
+	}
 }
 
 func Execute() {
@@ -32,8 +52,6 @@ func Execute() {
 		Long:  "Quick Congress: A simple interface for gaining more in-depth knowledge about what the hell is going on in congress",
 		Run:   congressCLIEntry,
 	}
-
-	rootCmd.AddCommand()
 
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Fprintf(os.Stderr, "Error during execution:\n'%s'", err)
