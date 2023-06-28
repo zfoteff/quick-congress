@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"regexp"
+	"strconv"
 
 	"github.com/joho/godotenv"
 	"github.com/spf13/cobra"
@@ -14,32 +14,41 @@ import (
 	"github.com/zfoteff/quick-congress/pkg/quickcongress/controller/cli"
 )
 
-func congressCLIEntry(cmd *cobra.Command, args []string) {
-	client := client.NewCongressClient(os.Getenv("LIBRARY_OF_CONGRESS_API_KEY"))
-	err := godotenv.Load(".env")
-	if err != nil {
-		log.Fatalf("Some error occured. Err: %s", err)
-	}
-
+func getMenuChoice() *int {
 	var menuChoice string
-	for {
-		print(bin.MenuString)
-		fmt.Scan(&menuChoice)
-		isNumeric := regexp.MustCompile(`\d`).MatchString(menuChoice)
-		if isNumeric {
 
-			if menuChoice < 0 || menuChoice > 3 {
-				println("[ERR] Please only enter the options displayed in the menu")
-			}
-		} else if menuChoice < 0 || menuChoice > 3 {
+	for {
+		print(bin.MenuString) // Print menu every loop interation
+		fmt.Scanln(&menuChoice)
+		menuChoiceValue, err := strconv.Atoi(menuChoice)
+
+		if err == nil && menuChoiceValue >= 0 && menuChoiceValue <= 3 {
+			return &menuChoiceValue
 		} else {
-			break
+			println("[ERR] Please only enter the options displayed in the menu")
 		}
 	}
+}
 
-	switch menuChoice {
+func congressCLIEntry(cmd *cobra.Command, args []string) {
+	client := client.NewCongressClient(os.Getenv("LIBRARY_OF_CONGRESS_API_KEY"))
+	goEnvErr := godotenv.Load(".env")
+
+	if goEnvErr != nil {
+		log.Fatalf("Some error occured. Err: %s", goEnvErr)
+	}
+
+	menuChoice := getMenuChoice()
+
+	switch *menuChoice {
 	case 0:
 		println(cli.GetCurrentCongressSession(client, context.TODO()))
+	case 1:
+		println("1")
+	case 2:
+		println("2")
+	case 3:
+		println("3")
 	default:
 		println("[ERR] Please enter one of the menu selections on screen")
 	}
