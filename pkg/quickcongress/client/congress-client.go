@@ -48,7 +48,7 @@ func (c *CongressClient) sendRequest(req *http.Request, v interface{}) error {
 
 	res, err := c.httpClient.Do(req)
 	if err != nil {
-		fmt.Printf("Some error occured. Err: %s", err)
+		log.Printf("Error sending HTTP request to congress server. Err: %s", err)
 		return err
 	}
 
@@ -56,9 +56,11 @@ func (c *CongressClient) sendRequest(req *http.Request, v interface{}) error {
 
 	// Unmarshall into error response
 	if res.StatusCode != http.StatusOK {
+		log.Printf("Status: %d. Could not unmarshall response into response object", res.StatusCode)
 		var errRes model.CongressesErrorRes
 		if err = json.NewDecoder(res.Body).Decode(&errRes); err == nil {
-			log.Fatalf("Some error occured. Err: %s", err)
+			log.Printf("Could not unmarshall error response into error object")
+			return err
 		}
 
 		return err
@@ -81,7 +83,7 @@ func (c *CongressClient) GetCongress(ctx context.Context, options *model.Congres
 
 	req, err := http.NewRequest(
 		"GET",
-		fmt.Sprintf("%s/congress/%d?api_key=%s",
+		fmt.Sprintf("%scongress/%d?api_key=%s",
 			c.baseURL,
 			congressNumber,
 			c.apiKey),

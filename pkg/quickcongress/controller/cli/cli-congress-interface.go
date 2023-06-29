@@ -20,5 +20,21 @@ func GetCurrentCongressSession(client *client.CongressClient, ctx context.Contex
 		panic(error)
 	}
 
-	return string(response.ToString())
+	return response.ToString()
 }
+
+func GetCongressSession(client *client.CongressClient, ctx context.Context, session uint16) (selected_session string) {
+	request_query := &model.CongressReqPath{
+		CongressNumber: session,
+	}
+
+	response, error := client.GetCongress(ctx, &model.CongressReqOptions{PathParameters: *request_query})
+
+	if error != nil {
+		panic(error)
+	}
+
+	return response.Congress.ToString()
+}
+
+func GetCongressSessions(client *client.CongressClient, ctx context.Context, sessions int) session {}

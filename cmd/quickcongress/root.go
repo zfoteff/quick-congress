@@ -30,9 +30,9 @@ func getMenuChoice() *int {
 	}
 }
 
-func congressCLIEntry(cmd *cobra.Command, args []string) {
-	client := client.NewCongressClient(os.Getenv("LIBRARY_OF_CONGRESS_API_KEY"))
+func congressCLIEntryPoint(cmd *cobra.Command, args []string) {
 	goEnvErr := godotenv.Load(".env")
+	client := client.NewCongressClient(os.Getenv("LIBRARY_OF_CONGRESS_API_KEY"))
 
 	if goEnvErr != nil {
 		log.Fatalf("Some error occured. Err: %s", goEnvErr)
@@ -59,7 +59,7 @@ func Execute() {
 		Use:   "quick-congress",
 		Short: "quick-congress - a simple CLI to inspect congressional bill/amendments",
 		Long:  "Quick Congress: A simple interface for gaining more in-depth knowledge about what the hell is going on in congress",
-		Run:   congressCLIEntry,
+		Run:   congressCLIEntryPoint,
 	}
 
 	if err := rootCmd.Execute(); err != nil {
