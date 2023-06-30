@@ -15,11 +15,16 @@ import (
 )
 
 func getMenuChoice() *int {
+	// TODO: abstract with a metadata header that includes previous step for back button, number of selections for the end range
+
 	var menuChoice string
 
 	for {
-		print(bin.MenuString) // Print menu every loop interation
+		print(bin.CongressMenu) // Print menu every loop interation
 		fmt.Scanln(&menuChoice)
+
+		// TODO: Check for 'q' character and return -1 to end program
+
 		menuChoiceValue, err := strconv.Atoi(menuChoice)
 
 		if err == nil && menuChoiceValue >= 0 && menuChoiceValue <= 3 {
@@ -30,7 +35,28 @@ func getMenuChoice() *int {
 	}
 }
 
+func getInputForPastCongressSelection() *int {
+	var menuChoice string
+
+	for {
+		print(bin.CongressYearSelectionMenu) // Print menu every loop interation
+		fmt.Scanln(&menuChoice)
+
+		// TODO: Check for 'b' character and return -2 to return to previous menu
+
+		menuChoiceValue, err := strconv.Atoi(menuChoice)
+
+		if err == nil && menuChoiceValue >= 1 && menuChoiceValue <= 117 {
+			return &menuChoiceValue
+		} else {
+			println("[ERR] Please only enter the options displayed in the menu")
+		}
+	}
+}
+
+// Entry function for the congress CLI menu
 func congressCLIEntryPoint(cmd *cobra.Command, args []string) {
+	// TODO: Refactor into new menu screen that absracts congress selection into larger menu
 	goEnvErr := godotenv.Load(".env")
 	client := client.NewCongressClient(os.Getenv("LIBRARY_OF_CONGRESS_API_KEY"))
 
@@ -44,7 +70,8 @@ func congressCLIEntryPoint(cmd *cobra.Command, args []string) {
 	case 0:
 		println(cli.GetCurrentCongressSession(client, context.TODO()))
 	case 1:
-		println("1")
+		session := getInputForPastCongressSelection()
+		println(cli.GetCongressSession(client, context.TODO(), uint16(*session)))
 	case 2:
 		println("2")
 	case 3:

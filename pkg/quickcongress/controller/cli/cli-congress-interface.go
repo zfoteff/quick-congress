@@ -37,4 +37,18 @@ func GetCongressSession(client *client.CongressClient, ctx context.Context, sess
 	return response.Congress.ToString()
 }
 
-func GetCongressSessions(client *client.CongressClient, ctx context.Context, sessions int) session {}
+func GetCongressSessions(client *client.CongressClient, ctx context.Context, sessions uint16, offset uint16) (session string) {
+	request_query := &model.CongressesReqQuery{
+		Format: "json",
+		Limit:  sessions,
+		Offset: 0,
+	}
+
+	response, error := client.GetCongresses(ctx, &model.CongressesReqOptions{QueryString: *request_query})
+
+	if error != nil {
+		panic(error)
+	}
+
+	return response.ToString()
+}
