@@ -1,92 +1,35 @@
 package quickcongress
 
 import (
-	"context"
 	"fmt"
-	"log"
 	"os"
-	"strconv"
 
-	"github.com/joho/godotenv"
 	"github.com/spf13/cobra"
 	"github.com/zfoteff/quick-congress/bin"
-	"github.com/zfoteff/quick-congress/pkg/quickcongress/client"
-	"github.com/zfoteff/quick-congress/pkg/quickcongress/controller/cli"
+	"github.com/zfoteff/quick-congress/cmd/congress"
+	"github.com/zfoteff/quick-congress/pkg/quickcongress/model"
 )
 
-func getMenuChoice() *int {
-	// TODO: abstract with a metadata header that includes previous step for back button, number of selections for the end range
+// Entry function for the CLI version of the Quick Congress application
+// Prompts the user with the main menu, and requests input for a submenu
+func quickCongressCLIEntryPoint(cmd *cobra.Command) {
+	menuNode := model.NewHeadMenuNode(bin.AppMenu, 0, 3)
+	menuSelection := getMenuNodeInput(*&menuNode)
 
-	var menuChoice string
-
-	for {
-		print(bin.CongressMenu) // Print menu every loop interation
-		fmt.Scanln(&menuChoice)
-
-		// TODO: Check for 'q' character and return -1 to end program
-
-		menuChoiceValue, err := strconv.Atoi(menuChoice)
-
-		if err == nil && menuChoiceValue >= 0 && menuChoiceValue <= 3 {
-			return &menuChoiceValue
-		} else {
-			println("[ERR] Please only enter the options displayed in the menu")
-		}
-	}
-}
-
-func getInputForPastCongressSelection() *int {
-	var menuChoice string
-
-	for {
-		print(bin.CongressYearSelectionMenu) // Print menu every loop interation
-		fmt.Scanln(&menuChoice)
-
-		// TODO: Check for 'b' character and return -2 to return to previous menu
-
-		menuChoiceValue, err := strconv.Atoi(menuChoice)
-
-		if err == nil && menuChoiceValue >= 1 && menuChoiceValue <= 117 {
-			return &menuChoiceValue
-		} else {
-			println("[ERR] Please only enter the options displayed in the menu")
-		}
-	}
-}
-
-// Entry function for the congress CLI menu
-func congressCLIEntryPoint(cmd *cobra.Command, args []string) {
-	// TODO: Refactor into new menu screen that absracts congress selection into larger menu
-	goEnvErr := godotenv.Load(".env")
-	client := client.NewCongressClient(os.Getenv("LIBRARY_OF_CONGRESS_API_KEY"))
-
-	if goEnvErr != nil {
-		log.Fatalf("Some error occured. Err: %s", goEnvErr)
-	}
-
-	menuChoice := getMenuChoice()
-
-	switch *menuChoice {
+	switch menuSelection {
 	case 0:
-		println(cli.GetCurrentCongressSession(client, context.TODO()))
-	case 1:
-		session := getInputForPastCongressSelection()
-		println(cli.GetCongressSession(client, context.TODO(), uint16(*session)))
-	case 2:
-		println("2")
-	case 3:
-		println("3")
+		congress.CLIEntryPoint(cmd)
 	default:
-		println("[ERR] Please enter one of the menu selections on screen")
 	}
 }
 
+// CLI application entry point
 func Execute() {
 	var rootCmd = &cobra.Command{
 		Use:   "quick-congress",
 		Short: "quick-congress - a simple CLI to inspect congressional bill/amendments",
 		Long:  "Quick Congress: A simple interface for gaining more in-depth knowledge about what the hell is going on in congress",
-		Run:   congressCLIEntryPoint,
+		Run:   congress.CLIEntryPoint,
 	}
 
 	if err := rootCmd.Execute(); err != nil {

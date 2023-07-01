@@ -14,6 +14,8 @@ func showMenu(cmd *cobra.Command, args []string) {
 	println(bin.CongressMenu)
 }
 
+// Get user input for menu node.
+// Continuously prompt the
 func getMenuNodeInput(node *model.MenuNode) int {
 	var menuChoice string
 
@@ -21,6 +23,7 @@ func getMenuNodeInput(node *model.MenuNode) int {
 		fmt.Print(node.Text)
 		fmt.Scanln(&menuChoice)
 
+		// Check if user inputted commands to quit the program or go back a node
 		switch strings.ToLower(menuChoice) {
 		case "q":
 			return -1
