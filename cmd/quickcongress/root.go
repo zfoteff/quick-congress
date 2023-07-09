@@ -12,7 +12,7 @@ import (
 
 // Entry function for the CLI version of the Quick Congress application
 // Prompts the user with the main menu, and requests input for a submenu
-func quickCongressCLIEntryPoint(cmd *cobra.Command) {
+func quickCongressCLIEntryPoint(cmd *cobra.Command, args []string) {
 	menuNode := model.NewHeadMenuNode(bin.AppMenu, 0, 3)
 	menuSelection := getMenuNodeInput(*&menuNode)
 

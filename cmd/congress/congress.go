@@ -55,7 +55,7 @@ func getInputForPastCongressSelection() *int {
 }
 
 // Entry function for the congress CLI menu
-func CLIEntryPoint(cmd *cobra.Command) {
+func CLIEntryPoint(cmd *cobra.Command, args []string) {
 	goEnvErr := godotenv.Load(".env")
 	client := client.NewCongressClient(os.Getenv("LIBRARY_OF_CONGRESS_API_KEY"))
 
