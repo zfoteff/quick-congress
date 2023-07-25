@@ -7,7 +7,7 @@ import (
 
 	"github.com/spf13/cobra"
 	"github.com/zfoteff/quick-congress/bin"
-	"github.com/zfoteff/quick-congress/pkg/quickcongress/model"
+	"github.com/zfoteff/quick-congress/pkg/quickcongress/node"
 )
 
 func showMenu(cmd *cobra.Command, args []string) {
@@ -16,7 +16,7 @@ func showMenu(cmd *cobra.Command, args []string) {
 
 // Get user input for menu node.
 // Continuously prompt the
-func getMenuNodeInput(node *model.MenuNode) int {
+func getMenuNodeInput(node *node.MenuNode) int {
 	var menuChoice string
 
 	for {

@@ -6,20 +6,26 @@ import (
 
 	"github.com/spf13/cobra"
 	"github.com/zfoteff/quick-congress/bin"
-	"github.com/zfoteff/quick-congress/cmd/congress"
-	"github.com/zfoteff/quick-congress/pkg/quickcongress/model"
+	"github.com/zfoteff/quick-congress/pkg/quickcongress/node"
 )
 
-// Entry function for the CLI version of the Quick Congress application
-// Prompts the user with the main menu, and requests input for a submenu
+// Evaluation root function for the CLI version of the Quick Congress application
+// Prompts the user with the main menu, and requests input for a submenus.
+// Continues to prompt for user input until the user quits, an unhandled error
+// is encountered, or the program ends naturally.
 func quickCongressCLIEntryPoint(cmd *cobra.Command, args []string) {
-	menuNode := model.NewHeadMenuNode(bin.AppMenu, 0, 3)
-	menuSelection := getMenuNodeInput(*&menuNode)
+	node := node.NewHeadMenuNode(bin.AppMenu, 0, 3)
 
-	switch menuSelection {
+	// for {
+	// 	if node == nil {
+	// 		return
+	// 	}
+
+	// 	node = node.evaluate()
+	// }
+
+	switch node.GetNodeInput() {
 	case 0:
-		congress.CLIEntryPoint(cmd)
-	default:
 	}
 }
 
@@ -29,7 +35,7 @@ func Execute() {
 		Use:   "quick-congress",
 		Short: "quick-congress - a simple CLI to inspect congressional bill/amendments",
 		Long:  "Quick Congress: A simple interface for gaining more in-depth knowledge about what the hell is going on in congress",
-		Run:   congress.CLIEntryPoint,
+		Run:   quickCongressCLIEntryPoint,
 	}
 
 	if err := rootCmd.Execute(); err != nil {
