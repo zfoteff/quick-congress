@@ -6,19 +6,23 @@ import (
 )
 
 type CongressNode struct {
-	Node
 	*MenuNode
 }
 
+// Create a new congress node that can be evaluated
 func NewCongressNode(prev *MenuNode) *CongressNode {
 	return &CongressNode{
-		MenuNode: &MenuNode{
+		&MenuNode{
 			Text:       bin.CongressMenu,
 			StartRange: 0,
 			EndRange:   2,
 			Previous:   prev,
 		},
 	}
+}
+
+func (c *CongressNode) int8() {
+
 }
 
 // Evaluation function for the congress menu node

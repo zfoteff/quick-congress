@@ -2,22 +2,21 @@ package node
 
 import (
 	"fmt"
+	"github.com/zfoteff/quick-congress/bin"
 	"strconv"
-	"strings"
 )
 
 // Represents a menu in the quick-congress application
 type MenuNode struct {
-	Node
 	Text       string
 	StartRange int
 	EndRange   int
 	Previous   *MenuNode
 }
 
-func NewHeadMenuNode(text string, startRange int, endRange int) *MenuNode {
+func NewHeadMenuNode(startRange int, endRange int) *MenuNode {
 	return &MenuNode{
-		Text:       text,
+		Text:       bin.AppMenu,
 		StartRange: startRange,
 		EndRange:   endRange,
 		Previous:   nil,
@@ -33,11 +32,20 @@ func NewMenuNode(text string, startRange int, endRange int, previous *MenuNode) 
 	}
 }
 
-func (node *MenuNode) GetNodeInput() int8 {
+func StopNode() *MenuNode {
+	return &MenuNode{
+		Text:       "STOPNODE",
+		StartRange: 0,
+		EndRange:   0,
+		Previous:   nil,
+	}
+}
+
+func (m *MenuNode) GetNodeInput() int8 {
 	var menuChoice string
 
 	for {
-		fmt.Print(node.Text)
+		fmt.Print(m.Text)
 		fmt.Scanln(&menuChoice)
 
 		//	Check if user inputted a quit command, or a backup command
@@ -50,7 +58,7 @@ func (node *MenuNode) GetNodeInput() int8 {
 
 		menuChoiceValue, err := strconv.Atoi(menuChoice)
 
-		if err == nil && menuChoiceValue >= node.StartRange && menuChoiceValue <= node.EndRange {
+		if err == nil && menuChoiceValue >= m.StartRange && menuChoiceValue <= m.EndRange {
 			return int8(menuChoiceValue)
 		} else {
 			println("[ERR] Please only enter the options displayed in the menu")
