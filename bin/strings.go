@@ -7,6 +7,8 @@ const (
 
 	CongressMenuTitle string = "| Congress "
 
+	SessionMenuTitle string = "| Session "
+
 	AppMenu string = AppTitle + "\n\t[ 0 ] Congress info." +
 		"\n\t[ 1 ] Bill info." +
 		"\n\t[ 2 ] Summary info." +
@@ -23,7 +25,7 @@ const (
 		"\n\t[ 2 ] Get a range of congress sessions" +
 		"\n: "
 
-	CongressYearSelectionMenu string = AppTitle + CongressMenuTitle + "| Past sessions by number" +
+	SessionMenu string = AppTitle + CongressMenuTitle + SessionMenuTitle +
 		"\n\tPlease enter a session of congress to review (1st - 118th session are available)" +
 		"\n: "
 )

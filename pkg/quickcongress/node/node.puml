@@ -1,0 +1,52 @@
+@startuml Node Inheritence Diagram
+interface Node {
+        {abstract} +int16 GetNodeInput()
+        {abstract} +Node Evaluate()
+}
+note top of Node : All objects will inherit from this \ninterface, but will be composed of \nMenuNodes or CommandNodes
+
+interface QuickCongressCLIInterface {
+        -CongressProvider
+        -void initProvider()
+        +str GetCurrentCongressSession()
+        +str GetCongressSession(uint16)
+        +str GetCongressSessions(uint16, uint16)
+}
+
+class CongressProvider {
+        -client CongressClient
+        +CongressProvider NewCongressProvider(*CongressClient)
+        +CongressesSuccessRes GetCurrentCongress()
+        +CongressSuccessRes GetCongress(uint16)
+        +CongressesSuccessRes GetCongresses(uint16, uint16)
+}
+
+class MenuNode {
+        +Text string
+        +StartRange int
+        +EndRange int
+        +Previous *Node
+        +int16 GetNodeInput()
+        +Node Evaluate()
+}
+class CongressNode {
+        +MenuNode
+        +int16 GetNodeInput()
+        +Node Evaluate()
+}
+class SessionNode {
+        +MenuNode
+        +int16 GetNodeInput()
+        +Node Evaluate()
+}
+
+MenuNode *-- CongressNode
+MenuNode *-- SessionNode
+QuickCongressCLIInterface *-- CongressProvider
+
+QuickCongressCLIInterface <|-- CongressNode
+QuickCongressCLIInterface <|-- SessionNode
+Node <|-- MenuNode
+Node <|-- CongressNode
+Node <|-- SessionNode
+@enduml

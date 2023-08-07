@@ -2,24 +2,13 @@ package client
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
-	"log"
-	"net/http"
-	"time"
-
 	"github.com/zfoteff/quick-congress/pkg/quickcongress/model"
-)
-
-const (
-	BaseURLV3  = "https://api.congress.gov"
-	ApiVersion = "/v3/"
+	"net/http"
 )
 
 type CongressClient struct {
-	apiKey     string
-	baseURL    string
-	httpClient *http.Client
+	client *QuickCongressClient
 }
 
 type CongressClientSuccessRes struct {
@@ -32,46 +21,12 @@ type CongressClientErrorRes struct {
 	Error interface{} `json:"error"`
 }
 
-func NewCongressClient(apiKey string) *CongressClient {
-	return &CongressClient{
-		baseURL: BaseURLV3 + ApiVersion,
-		apiKey:  apiKey,
-		httpClient: &http.Client{
-			Timeout: time.Minute,
-		},
-	}
+func NewCongressClient() *CongressClient {
+	return &CongressClient{client: NewQuickCongressClient()}
 }
 
-func (c *CongressClient) sendRequest(req *http.Request, v interface{}) error {
-	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("Accept", "application/json")
-
-	res, err := c.httpClient.Do(req)
-	if err != nil {
-		log.Printf("Error sending HTTP request to congress server. Err: %s", err)
-		return err
-	}
-
-	defer res.Body.Close()
-
-	// Unmarshall into error response
-	if res.StatusCode != http.StatusOK {
-		log.Printf("Status: %d. Could not unmarshall response into response object", res.StatusCode)
-		var errRes model.CongressesErrorRes
-		if err = json.NewDecoder(res.Body).Decode(&errRes); err == nil {
-			log.Printf("Could not unmarshall error response into error object")
-			return err
-		}
-
-		return err
-	}
-
-	// Unmarshall into success response
-	if err = json.NewDecoder(res.Body).Decode(v); err != nil {
-		return err
-	}
-
-	return nil
+func NewCongressClientFromSource(client *QuickCongressClient) *CongressClient {
+	return &CongressClient{client: client}
 }
 
 func (c *CongressClient) GetCongress(ctx context.Context, options *model.CongressReqOptions) (*model.CongressSuccessRes, error) {
@@ -83,10 +38,10 @@ func (c *CongressClient) GetCongress(ctx context.Context, options *model.Congres
 
 	req, err := http.NewRequest(
 		"GET",
-		fmt.Sprintf("%scongress/%d?api_key=%s",
-			c.baseURL,
+		fmt.Sprintf("%s/%s/congress/%d?api_key=%s",
+			BaseURL,
+			APIVersion,
 			congressNumber,
-			c.apiKey),
 		nil)
 
 	if err != nil {
@@ -96,7 +51,7 @@ func (c *CongressClient) GetCongress(ctx context.Context, options *model.Congres
 	req = req.WithContext(ctx)
 
 	res := model.CongressSuccessRes{}
-	if err := c.sendRequest(req, &res); err != nil {
+	if err := c.exchange(req, &res); err != nil {
 		return nil, err
 	}
 
@@ -131,7 +86,7 @@ func (c *CongressClient) GetCongresses(ctx context.Context, options *model.Congr
 	req = req.WithContext(ctx)
 
 	res := model.CongressesSuccessRes{}
-	if err := c.sendRequest(req, &res); err != nil {
+	if err := c.exchange(req, &res); err != nil {
 		return nil, err
 	}
 

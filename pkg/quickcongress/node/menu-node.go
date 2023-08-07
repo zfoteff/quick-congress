@@ -2,8 +2,10 @@ package node
 
 import (
 	"fmt"
-	"github.com/zfoteff/quick-congress/bin"
 	"strconv"
+	"strings"
+
+	"github.com/zfoteff/quick-congress/bin"
 )
 
 // Represents a menu in the quick-congress application
@@ -11,19 +13,19 @@ type MenuNode struct {
 	Text       string
 	StartRange int
 	EndRange   int
-	Previous   *MenuNode
+	Previous   *Node
 }
 
-func NewHeadMenuNode(startRange int, endRange int) *MenuNode {
+func NewHeadMenuNode() *MenuNode {
 	return &MenuNode{
 		Text:       bin.AppMenu,
-		StartRange: startRange,
-		EndRange:   endRange,
+		StartRange: 0,
+		EndRange:   3,
 		Previous:   nil,
 	}
 }
 
-func NewMenuNode(text string, startRange int, endRange int, previous *MenuNode) *MenuNode {
+func NewMenuNode(text string, startRange int, endRange int, previous *Node) *MenuNode {
 	return &MenuNode{
 		Text:       text,
 		StartRange: startRange,
@@ -32,16 +34,7 @@ func NewMenuNode(text string, startRange int, endRange int, previous *MenuNode) 
 	}
 }
 
-func StopNode() *MenuNode {
-	return &MenuNode{
-		Text:       "STOPNODE",
-		StartRange: 0,
-		EndRange:   0,
-		Previous:   nil,
-	}
-}
-
-func (m *MenuNode) GetNodeInput() int8 {
+func (m *MenuNode) GetNodeInput() int16 {
 	var menuChoice string
 
 	for {
@@ -59,26 +52,36 @@ func (m *MenuNode) GetNodeInput() int8 {
 		menuChoiceValue, err := strconv.Atoi(menuChoice)
 
 		if err == nil && menuChoiceValue >= m.StartRange && menuChoiceValue <= m.EndRange {
-			return int8(menuChoiceValue)
+			return int16(menuChoiceValue)
 		} else {
 			println("[ERR] Please only enter the options displayed in the menu")
 		}
 	}
 }
 
-func (m *MenuNode) Evaluate() *Node {
+func (m *MenuNode) Evaluate() Node {
+	var nextNode Node
+
 	switch m.GetNodeInput() {
+	case -2:
+		// Can't go back on main menu, just exit program
+		nextNode = nil
+	case -1:
+		// Quit program
+		nextNode = nil
 	case 0:
 		// Congress info.
-		return NewCongressNode(m)
+		nextNode = NewCongressNode(m)
 	case 1:
 		// Bill info.
 		fmt.Print("Bill info.")
 	case 2:
 		// Summary info.
-		fmt.Print("Bill info.")
+		fmt.Print("Summary info.")
 	case 3:
 		// Representative info.
-		fmt.Print("Bill info.")
+		fmt.Print("Representative info.")
 	}
+
+	return nextNode
 }

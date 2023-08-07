@@ -5,27 +5,21 @@ import (
 	"os"
 
 	"github.com/spf13/cobra"
-	"github.com/zfoteff/quick-congress/bin"
 	"github.com/zfoteff/quick-congress/pkg/quickcongress/node"
 )
 
-// Evaluation root function for the CLI version of the Quick Congress application
-// Prompts the user with the main menu, and requests input for a submenus.
-// Continues to prompt for user input until the user quits, an unhandled error
-// is encountered, or the program ends naturally.
+// Evaluation root function for the CLI version of the Quick Congress application.
+// Continues to prompt for user input until the user quits, an unhandled error is
+// encountered, or the program ends naturally with nil node.
 func quickCongressCLIEntryPoint(cmd *cobra.Command, args []string) {
-	node := node.NewHeadMenuNode(bin.AppMenu, 0, 3)
+	var node node.Node = node.NewHeadMenuNode()
 
-	// for {
-	// 	if node == nil {
-	// 		return
-	// 	}
+	for {
+		if node == nil {
+			return
+		}
 
-	// 	node = node.evaluate()
-	// }
-
-	switch node.GetNodeInput() {
-	case 0:
+		node = node.Evaluate()
 	}
 }
 
