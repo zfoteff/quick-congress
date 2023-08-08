@@ -1,7 +1,6 @@
 package provider
 
 import (
-	"context"
 	"log"
 
 	"github.com/zfoteff/quick-congress/pkg/quickcongress/client"
@@ -27,7 +26,7 @@ func (p *CongressProvider) GetCurrentCongress() model.CongressesSuccessRes {
 			Offset: 0,
 		}}
 
-	response, error := p.client.GetCongresses(context.TODO(), request)
+	response, error := p.client.GetCongresses(request)
 
 	if error != nil {
 		log.Fatal(error)
@@ -43,7 +42,7 @@ func (p *CongressProvider) GetCongress(session uint16) model.CongressSuccessRes 
 		},
 	}
 
-	response, error := p.client.GetCongress(context.TODO(), request)
+	response, error := p.client.GetCongress(request)
 
 	if error != nil {
 		log.Fatal(error)
@@ -61,7 +60,7 @@ func (p *CongressProvider) GetCongresses(limit uint16, offset uint16) model.Cong
 		},
 	}
 
-	response, error := p.client.GetCongresses(context.TODO(), request)
+	response, error := p.client.GetCongresses(request)
 
 	if error != nil {
 		log.Fatal(error)

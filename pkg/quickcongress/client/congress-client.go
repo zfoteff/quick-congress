@@ -1,24 +1,13 @@
 package client
 
 import (
-	"context"
 	"fmt"
+
 	"github.com/zfoteff/quick-congress/pkg/quickcongress/model"
-	"net/http"
 )
 
 type CongressClient struct {
 	client *QuickCongressClient
-}
-
-type CongressClientSuccessRes struct {
-	Code       uint16
-	Congresses interface{} `json:"data"`
-}
-
-type CongressClientErrorRes struct {
-	Code  uint16
-	Error interface{} `json:"error"`
 }
 
 func NewCongressClient() *CongressClient {
@@ -29,36 +18,27 @@ func NewCongressClientFromSource(client *QuickCongressClient) *CongressClient {
 	return &CongressClient{client: client}
 }
 
-func (c *CongressClient) GetCongress(ctx context.Context, options *model.CongressReqOptions) (*model.CongressSuccessRes, error) {
+func (c *CongressClient) GetCongress(options *model.CongressReqOptions) (*model.CongressSuccessRes, error) {
 	var congressNumber uint16 = 1
 
 	if options != nil {
 		congressNumber = options.PathParameters.CongressNumber
 	}
 
-	req, err := http.NewRequest(
-		"GET",
-		fmt.Sprintf("%s/%s/congress/%d?api_key=%s",
-			BaseURL,
-			APIVersion,
-			congressNumber,
-		nil)
-
-	if err != nil {
-		return nil, err
-	}
-
-	req = req.WithContext(ctx)
+	builder := NewRequestBuilder()
+	req := builder.BaseUrl(BaseURL).APIVersion(APIVersion).Path(
+		fmt.Sprintf("congress/%d",
+			congressNumber)).APIKey(c.client.GetAPIKey()).build()
 
 	res := model.CongressSuccessRes{}
-	if err := c.exchange(req, &res); err != nil {
+	if err := c.client.Exchange(req, &res); err != nil {
 		return nil, err
 	}
 
 	return &res, nil
 }
 
-func (c *CongressClient) GetCongresses(ctx context.Context, options *model.CongressesReqOptions) (*model.CongressesSuccessRes, error) {
+func (c *CongressClient) GetCongresses(options *model.CongressesReqOptions) (*model.CongressesSuccessRes, error) {
 	var limit uint16 = 1
 	var format string = "json"
 	var offset uint16 = 0
@@ -69,24 +49,15 @@ func (c *CongressClient) GetCongresses(ctx context.Context, options *model.Congr
 		offset = options.QueryString.Offset
 	}
 
-	req, err := http.NewRequest(
-		"GET",
-		fmt.Sprintf("%s/congress?limit=%d&offset=%d&format=%s&api_key=%s",
-			c.baseURL,
+	builder := NewRequestBuilder()
+	req := builder.BaseUrl(BaseURL).APIVersion(APIVersion).Path("congress").QueryString(
+		fmt.Sprintf("limit=%d&offset=%d&format=%s",
 			limit,
 			offset,
-			format,
-			c.apiKey),
-		nil)
-
-	if err != nil {
-		return nil, err
-	}
-
-	req = req.WithContext(ctx)
+			format)).APIKey(c.client.GetAPIKey()).build()
 
 	res := model.CongressesSuccessRes{}
-	if err := c.exchange(req, &res); err != nil {
+	if err := c.client.Exchange(req, &res); err != nil {
 		return nil, err
 	}
 

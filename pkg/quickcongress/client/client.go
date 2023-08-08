@@ -1,12 +1,15 @@
 package client
 
-import "net/http"
-import "github.com/joho/godotenv"
-import "log"
-import "os"
-import "time"
-import "encoding/json"
-import "github.com/zfoteff/quick-congress/pkg/quickcongress/model"
+import (
+	"encoding/json"
+	"log"
+	"net/http"
+	"os"
+	"time"
+
+	"github.com/joho/godotenv"
+	"github.com/zfoteff/quick-congress/pkg/quickcongress/model"
+)
 
 const (
 	BaseURL    = "https://api.congress.gov"
@@ -14,14 +17,14 @@ const (
 )
 
 type QuickCongressClientInterface interface {
-	exchange(req *http.Request, res interface{}) error
-	CreateQuickCongressClientRequest()
+	Exchange(req *http.Request, res interface{}) error
 }
 
 type QuickCongressClient struct {
-	apiKey     string
-	baseUrl    string
-	httpClient *http.Client
+	apiKey      string
+	BaseURL     string
+	httpClient  *http.Client
+	redisClient *QuickCongressRedisClient
 }
 
 func NewQuickCongressClient() *QuickCongressClient {
@@ -30,18 +33,25 @@ func NewQuickCongressClient() *QuickCongressClient {
 	}
 
 	return &QuickCongressClient{
-		baseUrl: BaseURL + APIVersion,
+		BaseURL: BaseURL + APIVersion,
 		apiKey:  os.Getenv("LIBRARY_OF_CONGRESS_API_KEY"),
 		httpClient: &http.Client{
 			Transport: nil,
 			Timeout:   time.Minute,
 		},
+		redisClient: NewRedisClient(),
 	}
 }
 
-func (c *CongressClient) exchange(req *http.Request, res interface{}) error {
+func (c *QuickCongressClient) GetAPIKey() string {
+	return c.apiKey
+}
+
+func (c *QuickCongressClient) Exchange(req *http.Request, res interface{}) error {
+	exists, cachedResponse = c.redisClient.GetCacheValue(req.RequestURI)
+
 	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("Accept", "application/json")
+	req.Header.Set("Accept", "applica ption/json")
 
 	response, err := c.httpClient.Do(req)
 	if err != nil {
@@ -67,6 +77,8 @@ func (c *CongressClient) exchange(req *http.Request, res interface{}) error {
 	if err = json.NewDecoder(response.Body).Decode(res); err != nil {
 		return err
 	}
+
+	c.redisClient.SetCacheValue(req.RequestURI, res)
 
 	return nil
 }

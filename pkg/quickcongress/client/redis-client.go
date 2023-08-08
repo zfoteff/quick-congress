@@ -1,7 +1,14 @@
 package client
 
 import (
+	"log"
+	"time"
+
+	"os"
+
 	"github.com/go-redis/redis"
+	"github.com/joho/godotenv"
+	"github.com/zfoteff/quick-congress/pkg/quickcongress/model"
 )
 
 type QuickCongressRedisClient struct {
@@ -10,27 +17,46 @@ type QuickCongressRedisClient struct {
 	redisClient   *redis.Client
 }
 
-func (q *QuickCongressRedisClient) NewClient(redisHost string, redisPassword string) *QuickCongressRedisClient {
+func NewRedisClient() *QuickCongressRedisClient {
+	if goEnvErr := godotenv.Load(".env"); goEnvErr != nil {
+		log.Fatal(goEnvErr)
+	}
+
+	host := os.Getenv("REDIS_HOST")
+	password := os.Getenv("REDIS_PASSWORD")
 
 	return &QuickCongressRedisClient{
-		redisHost:     redisHost,
-		redisPassword: redisPassword,
+		redisHost:     host,
+		redisPassword: password,
 		redisClient: redis.NewClient(&redis.Options{
-			Addr:     redisHost,
-			Password: redisPassword,
+			Addr:     host,
+			Password: password,
 			DB:       0,
 		}),
 	}
 }
 
-// func ReconnectRedis(client *QuickCongressRedisClient) {
-// 	client.redisClient.Close()
-// 	client.redisClient = NewClient()
-// 	return
-// }
+func (q *QuickCongressRedisClient) SetCacheValue(url string, response model.CongressSuccessRes) {
+	err := q.redisClient.Set(url, response, time.Hour)
 
-// func SetValue(client *QuickCongressRedisClient, key string, value *congresses.CongressRes) {
-// 	client.redisClient.SetValue()
-// }
+	if err != nil {
+		log.Fatal(err)
+	}
 
-// func GetValue(client *QuickCongQuickCongressRedisClient, key string) interface{}
+}
+
+func (q *QuickCongressRedisClient) GetCacheValue(url string) (bool, string) {
+	value, err := q.redisClient.Get("").Result()
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	println(value)
+	return false, value
+}
+
+func (q *QuickCongressRedisClient) Reconnect() {
+	q.redisClient.Close()
+	q = NewRedisClient()
+}
