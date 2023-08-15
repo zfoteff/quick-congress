@@ -48,7 +48,12 @@ func (c *QuickCongressClient) GetAPIKey() string {
 }
 
 func (c *QuickCongressClient) Exchange(req *http.Request, res interface{}) error {
-	exists, cachedResponse = c.redisClient.GetCacheValue(req.RequestURI)
+	exists, cachedResponse := c.redisClient.GetCacheValue(req.RequestURI)
+
+	if exists {
+		println(cachedResponse)
+		return nil
+	}
 
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Accept", "applica ption/json")

@@ -8,7 +8,6 @@ import (
 
 	"github.com/go-redis/redis"
 	"github.com/joho/godotenv"
-	"github.com/zfoteff/quick-congress/pkg/quickcongress/model"
 )
 
 type QuickCongressRedisClient struct {
@@ -36,13 +35,14 @@ func NewRedisClient() *QuickCongressRedisClient {
 	}
 }
 
-func (q *QuickCongressRedisClient) SetCacheValue(url string, response model.CongressSuccessRes) {
+func (q *QuickCongressRedisClient) SetCacheValue(url string, response interface{}) bool {
 	err := q.redisClient.Set(url, response, time.Hour)
 
 	if err != nil {
 		log.Fatal(err)
 	}
 
+	return true
 }
 
 func (q *QuickCongressRedisClient) GetCacheValue(url string) (bool, string) {
@@ -53,10 +53,14 @@ func (q *QuickCongressRedisClient) GetCacheValue(url string) (bool, string) {
 	}
 
 	println(value)
-	return false, value
+	return true, value
 }
 
 func (q *QuickCongressRedisClient) Reconnect() {
+	log.Print("[*] Disconnecting from Redis Cache ...")
 	q.redisClient.Close()
+	log.Print("[-] Disconnected from Redis Cache ...")
+	log.Print("[*] Reconnecting to Redis Cache ...")
 	q = NewRedisClient()
+	log.Print("[+] Reconnected to Redis Cache ...")
 }

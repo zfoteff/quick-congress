@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/spf13/cobra"
+	"github.com/zfoteff/quick-congress/pkg/quickcongress/client"
 	"github.com/zfoteff/quick-congress/pkg/quickcongress/node"
 )
 
@@ -12,7 +13,10 @@ import (
 // Continues to prompt for user input until the user quits, an unhandled error is
 // encountered, or the program ends naturally with nil node.
 func quickCongressCLIEntryPoint(cmd *cobra.Command, args []string) {
+	var redisClient *client.QuickCongressRedisClient = client.NewRedisClient()
 	var node node.Node = node.NewHeadMenuNode()
+
+	redisClient.Reconnect()
 
 	for {
 		if node == nil {
