@@ -16,7 +16,11 @@ type QuickCongressRedisClient struct {
 	redisClient   *redis.Client
 }
 
-func NewRedisClient() *QuickCongressRedisClient {
+type QuickCongressRedisCache struct {
+	QuickCongressRedisClient
+}
+
+func newRedisClient() *QuickCongressRedisClient {
 	if goEnvErr := godotenv.Load(".env"); goEnvErr != nil {
 		log.Fatal(goEnvErr)
 	}
@@ -34,6 +38,8 @@ func NewRedisClient() *QuickCongressRedisClient {
 		}),
 	}
 }
+
+func NewRedisCache() *
 
 func (q *QuickCongressRedisClient) SetCacheValue(url string, response interface{}) bool {
 	err := q.redisClient.Set(url, response, time.Hour)
