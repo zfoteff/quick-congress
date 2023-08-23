@@ -6,7 +6,8 @@ import (
 
 	"os"
 
-	"github.com/go-redis/redis"
+	"github.com/go-redis/cache/v8"
+	"github.com/go-redis/redis/v8"
 	"github.com/joho/godotenv"
 )
 
@@ -14,13 +15,10 @@ type QuickCongressRedisClient struct {
 	redisHost     string
 	redisPassword string
 	redisClient   *redis.Client
+	redisCache    *cache.Cache
 }
 
-type QuickCongressRedisCache struct {
-	QuickCongressRedisClient
-}
-
-func newRedisClient() *QuickCongressRedisClient {
+func NewRedisClient() *QuickCongressRedisClient {
 	if goEnvErr := godotenv.Load(".env"); goEnvErr != nil {
 		log.Fatal(goEnvErr)
 	}
@@ -35,11 +33,24 @@ func newRedisClient() *QuickCongressRedisClient {
 			Addr:     host,
 			Password: password,
 			DB:       0,
-		}),
+		}), redisCache: nil,
 	}
 }
 
-func NewRedisCache() *
+func (q *QuickCongressRedisClient) ConnectToCache(client *QuickCongressRedisClient) *QuickCongressRedisCache {
+	return cache.New(&cache.Options{
+		Redis: q.redisClient,
+	})
+}
+
+func (q *QuickCongressRedisClient) Reconnect() {
+	log.Print("[*] Disconnecting from Redis Cache ...")
+	q.redisClient.Close()
+	log.Print("[-] Disconnected from Redis Cache ...")
+	log.Print("[*] Reconnecting to Redis Cache ...")
+	q = NewRedisClient()
+	log.Print("[+] Reconnected to Redis Cache ...")
+}
 
 func (q *QuickCongressRedisClient) SetCacheValue(url string, response interface{}) bool {
 	err := q.redisClient.Set(url, response, time.Hour)
@@ -60,13 +71,4 @@ func (q *QuickCongressRedisClient) GetCacheValue(url string) (bool, string) {
 
 	println(value)
 	return true, value
-}
-
-func (q *QuickCongressRedisClient) Reconnect() {
-	log.Print("[*] Disconnecting from Redis Cache ...")
-	q.redisClient.Close()
-	log.Print("[-] Disconnected from Redis Cache ...")
-	log.Print("[*] Reconnecting to Redis Cache ...")
-	q = NewRedisClient()
-	log.Print("[+] Reconnected to Redis Cache ...")
 }
