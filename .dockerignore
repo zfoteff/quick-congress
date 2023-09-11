@@ -1,0 +1,11 @@
+.dockerignore
+.git
+.gitignore
+.vscode
+dockerfile
+docker-compose.yml
+Makefile
+*.log
+*.md
+*.puml
+**/*_test.go

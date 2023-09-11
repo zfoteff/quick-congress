@@ -1,0 +1,16 @@
+version: '3.8'
+services:
+  cache:
+    image: redislabs/redis:latest
+    env_file:
+      - ./.env
+    ports:
+      - ""
+
+  backend:
+    image: zfoteff899/quickcongress
+    env_file:
+      - ./.env
+    build: Dockerfile
+    depends_on:
+      - cache

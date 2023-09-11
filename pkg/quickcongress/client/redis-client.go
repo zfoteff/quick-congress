@@ -7,9 +7,14 @@ import (
 	"os"
 
 	"github.com/go-redis/cache/v8"
-	"github.com/go-redis/redis/v8"
+	"github.com/go-redis/cache/v9"
+	"github.com/go-redis/redis"
 	"github.com/joho/godotenv"
+	"github.com/redis/go-redis/v9"
+	"github.com/zfoteff/quick-congress/bin"
 )
+
+var logger = bin.NewLogger("Cache", "cache.log")
 
 type QuickCongressRedisClient struct {
 	redisHost     string
@@ -26,6 +31,17 @@ func NewRedisClient() *QuickCongressRedisClient {
 	host := os.Getenv("REDIS_HOST")
 	password := os.Getenv("REDIS_PASSWORD")
 
+	ring := redis.NewRing(&redis.RingOptions{
+		Addrs: map[string]string{
+			host: "6379",
+		},
+	})
+
+	cache := cache.New(&cache.Options{
+		Redis:      ring,
+		LocalCache: cache.NewTinyLFU(1000, time.Minute),
+	})
+
 	return &QuickCongressRedisClient{
 		redisHost:     host,
 		redisPassword: password,
@@ -37,38 +53,34 @@ func NewRedisClient() *QuickCongressRedisClient {
 	}
 }
 
-func (q *QuickCongressRedisClient) ConnectToCache(client *QuickCongressRedisClient) *QuickCongressRedisCache {
-	return cache.New(&cache.Options{
-		Redis: q.redisClient,
-	})
-}
-
 func (q *QuickCongressRedisClient) Reconnect() {
-	log.Print("[*] Disconnecting from Redis Cache ...")
+	logger.Info("[*] Reconnecting to Redis Cache")
 	q.redisClient.Close()
-	log.Print("[-] Disconnected from Redis Cache ...")
-	log.Print("[*] Reconnecting to Redis Cache ...")
 	q = NewRedisClient()
-	log.Print("[+] Reconnected to Redis Cache ...")
+	logger.Info("[+] Reconnected to Redis Cache")
 }
 
 func (q *QuickCongressRedisClient) SetCacheValue(url string, response interface{}) bool {
-	err := q.redisClient.Set(url, response, time.Hour)
-
-	if err != nil {
-		log.Fatal(err)
-	}
+	///////////////////////////////////////////////////////////
+	// err := q.redisClient.Set(url, response, time.Hour)	 //
+	// 														 //
+	// if err != nil {										 //
+	// 	log.Fatal(err)									 //
+	// }													 //
+	///////////////////////////////////////////////////////////
 
 	return true
 }
 
 func (q *QuickCongressRedisClient) GetCacheValue(url string) (bool, string) {
-	value, err := q.redisClient.Get("").Result()
-
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	println(value)
-	return true, value
+	/////////////////////////////////////////////////////
+	// value, err := q.redisClient.Get("").Result()	   //
+	// 												   //
+	// if err != nil {								   //
+	// 	log.Fatal(err)							   //
+	// }											   //
+	// 												   //
+	// println(value)								   //
+	/////////////////////////////////////////////////////
+	return true, "true"
 }
