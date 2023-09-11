@@ -1,8 +1,0 @@
-[Cache] 2023/09/11 16:39:03 logger.go:43: [INFO]	[*] Disconnecting from Redis Cache
-[Cache] 2023/09/11 16:39:03 logger.go:43: [INFO]	[-] Disconnected from Redis Cache
-[Cache] 2023/09/11 16:39:03 logger.go:43: [INFO]	[*] Reconnecting to Redis Cache
-[Cache] 2023/09/11 16:39:03 logger.go:43: [INFO]	[+] Reconnected to Redis Cache
-[Cache] 2023/09/11 16:44:37 logger.go:43: [INFO]	[*] Disconnecting from Redis Cache
-[Cache] 2023/09/11 16:44:37 logger.go:43: [INFO]	[-] Disconnected from Redis Cache
-[Cache] 2023/09/11 16:44:37 logger.go:43: [INFO]	[*] Reconnecting to Redis Cache
-[Cache] 2023/09/11 16:44:37 logger.go:43: [INFO]	[+] Reconnected to Redis Cache
