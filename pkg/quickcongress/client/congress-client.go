@@ -61,7 +61,7 @@ func (c *CongressClient) GetCongresses(options *model.CongressesReqOptions) (*mo
 
 	res := model.CongressesSuccessRes{}
 	if err := c.client.Exchange(req, &res); err != nil {
-		cacheLogger.Error("Error retrieving congress", err)
+		clientLogger.Error("Error retrieving congress", err)
 		return nil, err
 	}
 
