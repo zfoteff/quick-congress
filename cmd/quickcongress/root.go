@@ -6,21 +6,20 @@ import (
 
 	"github.com/spf13/cobra"
 	"github.com/zfoteff/quick-congress/bin"
-	"github.com/zfoteff/quick-congress/pkg/quickcongress/client"
 	"github.com/zfoteff/quick-congress/pkg/quickcongress/node"
 )
 
 var logger = bin.NewLogger("Launcher", "quick-congress-application.log")
 
-// Evaluation root function for the CLI version of the Quick Congress application.
-// Continues to prompt for user input until the user quits, an unhandled error is
-// encountered, or the program ends naturally with nil node.
+/**
+ * Evaluation root function for the CLI version of the Quick Congress application.
+ * Continues to prompt for user input until the user quits, an unhandled error is
+ * encountered, or the program ends naturally with nil node.
+ */
 func quickCongressCLIEntryPoint(cmd *cobra.Command, args []string) {
-	logger.Info("Starting Quick-Congress CLI Application")
-	var redisClient *client.QuickCongressRedisClient = client.NewRedisClient()
-	var node node.Node = node.NewHeadMenuNode()
+	logger.Info("Started Quick-Congress CLI Application")
 
-	redisClient.Reconnect()
+	var node node.Node = node.NewHeadMenuNode()
 
 	for {
 		if node == nil {
@@ -31,7 +30,7 @@ func quickCongressCLIEntryPoint(cmd *cobra.Command, args []string) {
 	}
 }
 
-// CLI application entry point
+// CLI entry point
 func Execute() {
 	var rootCmd = &cobra.Command{
 		Use:     "quick-congress",
@@ -41,6 +40,7 @@ func Execute() {
 		Run:     quickCongressCLIEntryPoint,
 	}
 
+	logger.Info("Starting Quick-Congress Application")
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Fprintf(os.Stderr, "Error during execution:\n'%s'", err)
 		os.Exit(1)

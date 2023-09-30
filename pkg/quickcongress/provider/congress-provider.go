@@ -8,7 +8,7 @@ import (
 )
 
 /*
-*Creates & formats requests to be sent to the client
+ * Creates & formats requests to be sent to the client
  */
 type CongressProvider struct {
 	client client.CongressClient

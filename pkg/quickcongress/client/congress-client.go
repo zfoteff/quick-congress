@@ -3,8 +3,11 @@ package client
 import (
 	"fmt"
 
+	"github.com/zfoteff/quick-congress/bin"
 	"github.com/zfoteff/quick-congress/pkg/quickcongress/model"
 )
+
+var clientLogger = bin.NewLogger("Congress Client", "congress-client.log")
 
 type CongressClient struct {
 	client *QuickCongressClient
@@ -58,6 +61,7 @@ func (c *CongressClient) GetCongresses(options *model.CongressesReqOptions) (*mo
 
 	res := model.CongressesSuccessRes{}
 	if err := c.client.Exchange(req, &res); err != nil {
+		cacheLogger.Error("Error retrieving congress", err)
 		return nil, err
 	}
 
