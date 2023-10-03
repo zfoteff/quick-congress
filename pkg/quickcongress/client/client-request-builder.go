@@ -27,8 +27,8 @@ type RequestBuilder struct {
 	method     HttpMethod
 }
 
-func NewRequestBuilder() RequestBuilder {
-	builder := RequestBuilder{}
+func NewRequestBuilder() *RequestBuilder {
+	builder := &RequestBuilder{}
 	builder.clear()
 	return builder
 }

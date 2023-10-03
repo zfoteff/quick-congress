@@ -11,11 +11,11 @@ import (
 
 var logger = bin.NewLogger("Launcher", "quick-congress-application.log")
 
-/**
- * Evaluation root function for the CLI version of the Quick Congress application.
- * Continues to prompt for user input until the user quits, an unhandled error is
- * encountered, or the program ends naturally with nil node.
- */
+/*
+Evaluation root function for the CLI version of the Quick Congress application.
+Continues to prompt for user input until the user quits, an unhandled error is
+encountered, or the program ends naturally with nil node.
+*/
 func quickCongressCLIEntryPoint(cmd *cobra.Command, args []string) {
 	logger.Info("Started Quick-Congress CLI Application")
 

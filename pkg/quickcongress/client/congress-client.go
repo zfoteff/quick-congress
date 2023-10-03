@@ -52,8 +52,7 @@ func (c *CongressClient) GetCongresses(options *model.CongressesReqOptions) (*mo
 		offset = options.QueryString.Offset
 	}
 
-	builder := NewRequestBuilder()
-	req := builder.BaseUrl(BaseURL).APIVersion(APIVersion).Path("congress").QueryString(
+	req := NewRequestBuilder().BaseUrl(BaseURL).APIVersion(APIVersion).Path("congress").QueryString(
 		fmt.Sprintf("limit=%d&offset=%d&format=%s",
 			limit,
 			offset,

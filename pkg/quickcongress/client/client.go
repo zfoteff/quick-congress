@@ -51,7 +51,7 @@ func (c *QuickCongressClient) Exchange(req *http.Request, res interface{}) error
 	exists, cachedResponse := c.redisClient.GetCacheValue(req.RequestURI)
 
 	if exists {
-		println(cachedResponse)
+		res = cachedResponse
 		return nil
 	}
 
@@ -66,7 +66,7 @@ func (c *QuickCongressClient) Exchange(req *http.Request, res interface{}) error
 
 	defer response.Body.Close()
 
-	// Unmarshall into error response
+	// Unmarshall into error response if the status code is not 200
 	if response.StatusCode != http.StatusOK {
 		log.Printf("Status: %d. Could not unmarshall response into response object", response.StatusCode)
 		var errRes model.CongressError

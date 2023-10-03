@@ -1,6 +1,9 @@
 package dto
 
-import "fmt"
+import (
+	"encoding/json"
+	"fmt"
+)
 
 type Congress struct {
 	Name       string            `json:"name"`
@@ -21,4 +24,12 @@ func (c *Congress) ToString() string {
 
 	congressString += fmt.Sprintf("%s (%s - %s):\n%s", c.Name, c.StartYear, c.EndYear, sessionString)
 	return congressString
+}
+
+func (c *Congress) MarshalBinary() ([]byte, error) {
+	return json.Marshal(c)
+}
+
+func (c *Congress) UnmarshalBinary(data []byte) error {
+	return json.Unmarshal(data, c)
 }
