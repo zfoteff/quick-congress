@@ -2,12 +2,13 @@ package client
 
 import (
 	"fmt"
+	"net/http"
 
 	"github.com/zfoteff/quick-congress/bin"
 	"github.com/zfoteff/quick-congress/pkg/quickcongress/model"
 )
 
-var clientLogger = bin.NewLogger("Congress Client", "congress-client.log")
+var congressClientLogger = bin.NewLogger("Congress Client", "congress-client.log")
 
 type CongressClient struct {
 	client *QuickCongressClient
@@ -19,6 +20,10 @@ func NewCongressClient() *CongressClient {
 
 func NewCongressClientFromSource(client *QuickCongressClient) *CongressClient {
 	return &CongressClient{client: client}
+}
+
+func getRequestUrl(req *http.Request) string {
+	return fmt.Sprintf("%s/%s%s?%s", req.URL.Scheme, req.URL.Host, req.URL.Path, req.URL.Query().Encode())
 }
 
 func (c *CongressClient) GetCongress(options *model.CongressReqOptions) (*model.CongressSuccessRes, error) {
@@ -59,8 +64,20 @@ func (c *CongressClient) GetCongresses(options *model.CongressesReqOptions) (*mo
 			format)).APIKey(c.client.GetAPIKey()).build()
 
 	res := model.CongressesSuccessRes{}
+
+	url := getRequestUrl(req)
+	exists, value := c.client.redisClient.GetCacheValue(url)
+	if exists {
+		congressClientLogger.Debug(value)
+		return &res, nil
+	}
+
 	if err := c.client.Exchange(req, &res); err != nil {
-		clientLogger.Error("Error retrieving congress", err)
+		congressClientLogger.Error("Error retrieving congress", err)
+		return nil, err
+	}
+
+	if err := c.client.redisClient.SetCacheValue(url, res); err != nil {
 		return nil, err
 	}
 

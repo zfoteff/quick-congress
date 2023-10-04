@@ -54,7 +54,7 @@ func (q *QuickCongressRedisClient) SetCacheValue(url string, response interface{
 }
 
 // Get a cached response using the URL as the key
-func (q *QuickCongressRedisClient) GetCacheValue(url string) (bool, interface{}) {
+func (q *QuickCongressRedisClient) GetCacheValue(url string) (bool, string) {
 	value, err := q.redisClient.Get(context.TODO(), url).Result()
 
 	if err != nil {

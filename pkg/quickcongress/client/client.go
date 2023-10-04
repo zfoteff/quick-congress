@@ -2,19 +2,21 @@ package client
 
 import (
 	"encoding/json"
-	"log"
+	"fmt"
 	"net/http"
 	"os"
 	"time"
 
 	"github.com/joho/godotenv"
-	"github.com/zfoteff/quick-congress/pkg/quickcongress/model"
+	"github.com/zfoteff/quick-congress/bin"
 )
 
 const (
 	BaseURL    = "https://api.congress.gov"
 	APIVersion = "v3"
 )
+
+var clientLogger = bin.NewLogger("Congress Client", "client.log")
 
 type QuickCongressClientInterface interface {
 	Exchange(req *http.Request, res interface{}) error
@@ -29,7 +31,7 @@ type QuickCongressClient struct {
 
 func NewQuickCongressClient() *QuickCongressClient {
 	if goEnvErr := godotenv.Load(".env"); goEnvErr != nil {
-		log.Fatalf("Could not load application environment variables. Err: %s", goEnvErr)
+		clientLogger.Error("Could not load application environment variables", goEnvErr)
 	}
 
 	return &QuickCongressClient{
@@ -48,31 +50,22 @@ func (c *QuickCongressClient) GetAPIKey() string {
 }
 
 func (c *QuickCongressClient) Exchange(req *http.Request, res interface{}) error {
-	exists, cachedResponse := c.redisClient.GetCacheValue(req.RequestURI)
-
-	if exists {
-		res = cachedResponse
-		return nil
-	}
-
 	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("Accept", "applica ption/json")
+	req.Header.Set("Accept", "applicaption/json")
 
 	response, err := c.httpClient.Do(req)
 	if err != nil {
-		log.Printf("Error sending HTTP request to congress server. Err: %s", err)
+		congressClientLogger.Error("Error sending HTTP request to congress server", err)
 		return err
 	}
 
 	defer response.Body.Close()
 
-	// Unmarshall into error response if the status code is not 200
+	// Unmarshall error into response if the status code is not 200
 	if response.StatusCode != http.StatusOK {
-		log.Printf("Status: %d. Could not unmarshall response into response object", response.StatusCode)
-		var errRes model.CongressError
-		if err = json.NewDecoder(response.Body).Decode(&errRes); err == nil {
-			log.Printf("Could not unmarshall error response into error object")
-			return err
+		congressClientLogger.Warning(fmt.Sprintf("Status: %d", response.StatusCode))
+		if err = json.NewDecoder(response.Body).Decode(&res); err == nil {
+			congressClientLogger.Error("Could not unmarshall error response into response object", err)
 		}
 
 		return err
@@ -83,7 +76,6 @@ func (c *QuickCongressClient) Exchange(req *http.Request, res interface{}) error
 		return err
 	}
 
-	c.redisClient.SetCacheValue(req.RequestURI, res)
-
+	congressClientLogger.Info(fmt.Sprintf("Status: %d. Recieved response from client in seconds", response.StatusCode))
 	return nil
 }
