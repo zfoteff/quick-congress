@@ -50,6 +50,7 @@ func (c *CongressClient) GetCongresses(options *model.CongressesReqOptions) (*mo
 	var limit uint16 = 1
 	var format string = "json"
 	var offset uint16 = 0
+	res := model.CongressesSuccessRes{}
 
 	if options != nil {
 		limit = options.QueryString.Limit
@@ -62,21 +63,20 @@ func (c *CongressClient) GetCongresses(options *model.CongressesReqOptions) (*mo
 			limit,
 			offset,
 			format)).APIKey(c.client.GetAPIKey()).build()
-
-	res := model.CongressesSuccessRes{}
-
 	url := getRequestUrl(req)
-	exists, value := c.client.redisClient.GetCacheValue(url)
-	if exists {
-		congressClientLogger.Debug(value)
+
+	// Check if cache contains value for the request url before request is sent
+	if err := c.client.redisClient.GetCacheValue(url, res); err == nil {
 		return &res, nil
 	}
 
+	// Send request to client if key dne in cache
 	if err := c.client.Exchange(req, &res); err != nil {
-		congressClientLogger.Error("Error retrieving congress", err)
+		congressClientLogger.Errorf("Error retrieving congress", err)
 		return nil, err
 	}
 
+	// Set cache value if it didn't exist before, then return the response
 	if err := c.client.redisClient.SetCacheValue(url, res); err != nil {
 		return nil, err
 	}

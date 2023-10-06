@@ -29,7 +29,7 @@ func NewLogger(name string, logfilePath string) *QuickCongressLogger {
 		os.Exit(1)
 	}
 
-	customLogger = log.New(logger, "["+name+"] ", log.Ldate|log.Ltime|log.Lshortfile)
+	customLogger = log.New(logger, "["+name+"] ", log.Ldate|log.Ltime)
 	return &QuickCongressLogger{
 		customLogger,
 	}
@@ -48,5 +48,9 @@ func (q *QuickCongressLogger) Warning(text string) {
 }
 
 func (q *QuickCongressLogger) Error(text string, err error) {
-	q.Log.Fatalf("[ERROR] %s:\n%s", text, err)
+	q.Log.Printf("[ERROR]\t%s:\n%s", text, err)
+}
+
+func (q *QuickCongressLogger) Errorf(text string, err error) {
+	q.Log.Fatalf("[ERROR]\t%s:\n%s", text, err)
 }

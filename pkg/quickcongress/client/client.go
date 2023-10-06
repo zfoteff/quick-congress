@@ -26,7 +26,7 @@ type QuickCongressClient struct {
 	apiKey      string
 	BaseURL     string
 	httpClient  *http.Client
-	redisClient *QuickCongressRedisClient
+	redisClient *QuickCongressRedisCache
 }
 
 func NewQuickCongressClient() *QuickCongressClient {
@@ -41,7 +41,7 @@ func NewQuickCongressClient() *QuickCongressClient {
 			Transport: nil,
 			Timeout:   time.Minute,
 		},
-		redisClient: NewRedisClient(),
+		redisClient: NewQuickCongressRedisCache(),
 	}
 }
 
