@@ -1,6 +1,8 @@
 package model
 
 import (
+	"encoding/json"
+
 	"github.com/zfoteff/quick-congress/pkg/quickcongress/model/dto"
 )
 
@@ -18,6 +20,14 @@ func (c *CongressesSuccessRes) ToString() string {
 	}
 
 	return congressessString
+}
+
+func (c *CongressesSuccessRes) MarshalBinary() (data []byte, err error) {
+	return json.Marshal(c)
+}
+
+func (c *CongressesSuccessRes) UnmarshalBinary(data []byte) (err error) {
+	return json.Unmarshal(data, c)
 }
 
 type CongressesErrorRes struct {

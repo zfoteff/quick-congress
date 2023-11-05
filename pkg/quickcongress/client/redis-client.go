@@ -39,7 +39,7 @@ func NewQuickCongressRedisCache() *QuickCongressRedisCache {
 			Addr:         host,
 			Password:     password,
 			DB:           0,
-			MaxRetries:   5,
+			MaxRetries:   1,
 			MaxIdleConns: 5,
 		}),
 	}
@@ -47,14 +47,7 @@ func NewQuickCongressRedisCache() *QuickCongressRedisCache {
 
 // Set a value in the cache using the URL as a key and the response as a value
 func (q *QuickCongressRedisCache) SetCacheValue(url string, response interface{}) error {
-	var resBytes bytes.Buffer
-
-	if err := json.NewEncoder(&resBytes).Encode(response); err != nil {
-		cacheLogger.Error(fmt.Sprintf("Error unmarshalling object when setting value for key: %s", url), err)
-		return err
-	}
-
-	if cacheErr := q.redisCache.Set(context.Background(), url, resBytes, time.Hour).Err(); cacheErr != nil {
+	if cacheErr := q.redisCache.Set(context.Background(), url, response, time.Hour).Err(); cacheErr != nil {
 		cacheLogger.Error("Error setting value in the cache", cacheErr)
 		return cacheErr
 	}
@@ -87,11 +80,3 @@ func (q *QuickCongressRedisCache) healthCheck(client *redis.Client) error {
 
 	return nil
 }
-
-// func (q *QuickCongressRedisCache) healthCheck(client *redis.Client) error {
-// 	if _, err := q.redisCache.Ping(context.TODO()).Result(); err != nil {
-// 		return err
-// 	}
-
-// 	return nil
-// }
