@@ -2,10 +2,12 @@ version: '3.8'
 services:
   cache:
     image: redislabs/redis:latest
-    env_file:
-      - ./.env
+    restart: always
     ports:
-      - ""
+      - "6379:6379"
+    command: redis-server --save 20 1 --loglevel warning
+    volumes:
+      - cache:/data
 
   backend:
     image: zfoteff899/quickcongress
@@ -14,3 +16,7 @@ services:
     build: Dockerfile
     depends_on:
       - cache
+
+volumes:
+  cache:
+    driver: local

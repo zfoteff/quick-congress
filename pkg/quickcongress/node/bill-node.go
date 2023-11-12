@@ -30,6 +30,10 @@ func (n *BillNode) GetBillByNumber() *BillNode {
 	return nil
 }
 
+func (n *BillNode) GetRecentlyUpdatedBills() *BillNode {
+	return nil
+}
+
 func (n *BillNode) GetNodeInput() int16 {
 	var menuChoice string
 
@@ -49,7 +53,7 @@ func (n *BillNode) GetNodeInput() int16 {
 
 		menuChoiceValue, err := strconv.Atoi(menuChoice)
 
-		if err == nil && menuChoiceValue >= c.StartRange && menuChoiceValue <= c.EndRange {
+		if err == nil && menuChoiceValue >= n.StartRange && menuChoiceValue <= n.EndRange {
 			return int16(menuChoiceValue)
 		} else {
 			println("[ERR] Please only enter the options displayed in the menu")
