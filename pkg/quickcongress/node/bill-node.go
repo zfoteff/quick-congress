@@ -26,6 +26,10 @@ func NewBillNode(prev *Node) *BillNode {
 	}
 }
 
+func (n *BillNode) GetBillByCongress() *BillNode {
+	return nil
+}
+
 func (n *BillNode) GetBillByNumber() *BillNode {
 	return nil
 }
