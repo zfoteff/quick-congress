@@ -7,6 +7,7 @@ import (
 
 type CLIInterface struct {
 	provider.CongressProvider
+	provider.BillProvider
 }
 
 /*

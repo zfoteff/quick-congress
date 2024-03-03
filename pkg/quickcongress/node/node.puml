@@ -7,6 +7,7 @@ note top of Node : All objects will inherit from this \ninterface, but will be c
 
 interface QuickCongressCLIInterface {
         -CongressProvider
+        -BillProvider
         -void initProvider()
         +str GetCurrentCongressSession()
         +str GetCongressSession(uint16)
@@ -19,6 +20,11 @@ class CongressProvider {
         +CongressesSuccessRes GetCurrentCongress()
         +CongressSuccessRes GetCongress(uint16)
         +CongressesSuccessRes GetCongresses(uint16, uint16)
+}
+
+class BillProvider {
+        -client BillClient
+        +BillProvider NewBillProvider(*CongressClient)
 }
 
 class MenuNode {
@@ -39,14 +45,24 @@ class SessionNode {
         +int16 GetNodeInput()
         +Node Evaluate()
 }
+class BillNode {
+        +MenuNode
+        +int16 GetNodeInput()
+        +Node Evaluate()
+}
 
 MenuNode *-- CongressNode
 MenuNode *-- SessionNode
+MenuNode *-- BillNode
 QuickCongressCLIInterface *-- CongressProvider
+QuickCongressCLIInterface *-- BillProvider
 
 QuickCongressCLIInterface <|-- CongressNode
 QuickCongressCLIInterface <|-- SessionNode
+QuickCongressCLIInterface <|-- BillNode
+
 Node <|-- MenuNode
 Node <|-- CongressNode
 Node <|-- SessionNode
+Node <|-- BillNode
 @enduml

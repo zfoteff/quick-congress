@@ -16,7 +16,7 @@ const (
 	APIVersion = "v3"
 )
 
-var clientLogger = bin.NewLogger("LoC Client", "client.log")
+var clientLogger = bin.NewLogger("Client", "client.log")
 
 type QuickCongressClientInterface interface {
 	Exchange(url string, req *http.Request, res interface{}) error

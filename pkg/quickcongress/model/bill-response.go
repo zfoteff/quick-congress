@@ -13,5 +13,3 @@ type BillSuccessRes struct {
 func (b *BillSuccessRes) MarshalBinary() (data []byte, err error) {
 	return json.Marshal(b)
 }
-
-func 
